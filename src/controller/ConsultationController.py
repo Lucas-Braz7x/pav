@@ -8,9 +8,12 @@ class ConsultationController(Resource):
         self.consultationService = ConsultationService()
         self.consultationModelView = ModelView()
 
-    def get(self, consultation_id=None, doctorName=None):
+    def get(self, consultation_id=None, doctorName=None, patientName=None):
         if(doctorName):
             return self.consultationService.findByDoctorName(doctorName=doctorName)
+        
+        if(patientName):
+            return self.consultationService.findByPatientName(patientName=patientName)
         
         consultation = self.consultationService.find(consultation_id)      
 

@@ -12,6 +12,7 @@ def initialize_routes(api):
     api.add_resource(DoctorController, '/doctors/name/<string:name>', endpoint='getByNameDoctor')
     api.add_resource(ConsultationController, '/consultations', '/consultations/<int:consultation_id>')
     api.add_resource(ConsultationController, '/consultations/doctorName/<string:doctorName>', endpoint='findByDoctorName')
+    api.add_resource(ConsultationController, '/consultations/patientName/<string:patientName>', endpoint='findByPatientName')
     api.add_resource(AppointmentController, '/appointments/date/<string:date>', endpoint='getByDate')
     api.add_resource(AppointmentController, '/appointments', '/appointments/<int:appointment_id>')
     api.add_resource(MedicalRecordController, '/medical/record', '/medical/record/<int:medicalRecord_id>')

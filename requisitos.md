@@ -7,10 +7,7 @@
 - O sistema deve validar que a idade do paciente é um valor positivo.
 - O sistema deve validar o tamanho do cpf.
 - O sistema deve validar se o cpf já existe.
-
-## - Pesquisa de Consultas por Paciente: O sistema deve permitir que os usuários pesquisem e filtrem consultas com base no nome do paciente. (Fazer)
-
-## - O sistema deve exibir todos os Medicals Records por Patient, caso exista (fazer)
+- Pesquisa de Consultas por Paciente: O sistema deve permitir que os usuários pesquisem e filtrem consultas com base no nome do paciente.
 
 ## Doctor
 
@@ -18,8 +15,8 @@
 - O sistema deve listar todos os médicos cadastrados.
 - O sistema deve validar listar todos os médicos cadastrados.
 - O sistema deve validar se o crm é maior que 0.
-
-### - Pesquisa de Consultas por Médico: O sistema deve permitir que os usuários pesquisem e filtrem consultas com base no nome do médico. (Fazer)
+- O sistema deve validar se o crm já existe.
+- Pesquisa de Consultas por Médico: O sistema deve permitir que os usuários pesquisem e filtrem consultas com base no nome do médico.
 
 # Consultation
 

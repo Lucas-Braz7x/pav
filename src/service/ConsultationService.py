@@ -45,6 +45,17 @@ class ConsultationService:
 
         return self.consultationModelView.formatterAll(filtered_consultations)
     
+    def findByPatientName(self, patientName):
+        consultations = self.consultationRepository.getAll()
+        filtered_consultations = []
+
+        for consultation in consultations:
+            print(consultation.appointments)
+            if consultation.doctor and consultation.patient.name == patientName:
+                filtered_consultations.append(consultation)
+
+        return self.consultationModelView.formatterAll(filtered_consultations)
+    
     
     def create(self, data):
         self.validation(data)

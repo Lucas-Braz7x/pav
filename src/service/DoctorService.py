@@ -19,6 +19,13 @@ class DoctorService:
         if crm <= 0: 
             abort(400, message="crm is not valid")
 
+        doctors = self.doctorRepository.getAll()
+
+        for doctor in doctors:
+            if(doctor.crm == str(crm)):
+                abort(400, message="crm already exist in database")
+        
+
     def find(self, doctor_id=None):
         if doctor_id:
             doctor = self.doctorRepository.getById(doctor_id)
