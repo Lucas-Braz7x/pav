@@ -1,14 +1,13 @@
 from src.repository.DoctorRepository import DoctorRepository
 from src.view.ModelView import ModelView
-from flask_restful import abort
-from flask import jsonify
+from flask_restful import abort, request
 
 class DoctorService:
     def __init__(self):
         self.doctorRepository = DoctorRepository()
         self.doctorView = ModelView()
 
-    def validation(self, data):
+    def validation(self, data, doctorId=None):
         name = data.get('name')
         specialty = data.get('specialty')
         crm = data.get('crm')
@@ -21,8 +20,18 @@ class DoctorService:
 
         doctors = self.doctorRepository.getAll()
 
-        for doctor in doctors:
-            if(doctor.crm == str(crm)):
+        request_method = request.method
+
+        filteredDoctors = []
+        
+        if(request_method == "PUT" and doctorId):
+            doctorRecord = self.doctorRepository.getById(doctorId)
+            if(doctorRecord.crm != str(crm)):
+                filteredDoctors = [doctor for doctor in doctors if doctor.crm == str(crm)]
+        else:
+            filteredDoctors = [doctor for doctor in doctors if doctor.crm == str(crm)]
+
+        if(len(filteredDoctors) > 0):
                 abort(400, message="crm already exist in database")
         
 
@@ -47,7 +56,7 @@ class DoctorService:
         
 
     def update(self, doctor_id, data):
-        self.validation(data)
+        self.validation(data, doctorId=doctor_id)
 
         updated_doctor = self.doctorRepository.update(doctor_id, data)
         

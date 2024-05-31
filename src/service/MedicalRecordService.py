@@ -31,28 +31,24 @@ class MedicalRecordService:
 
 
     def find(self, medicalRecordId=None):
+        medicalRecord = {}
+
         if medicalRecordId:
             medicalRecord = self.medicalRecordRepository.getById(medicalRecordId)
-            return self.medicalRecordModelView.formatter(medicalRecord)
+        else: 
+            medicalRecord = self.medicalRecordRepository.getAll()
         
-        medicalRecords = self.medicalRecordRepository.getAll()
-        return self.medicalRecordModelView.formatterAll(medicalRecords, 
-                                                    message="All medical records" if len(medicalRecords) else "No medical records found")
+        return medicalRecord
     
     def create(self, data):
         self.validation(data)
 
-        newMedicalRecord = self.medicalRecordRepository.create(data)
-
-        return self.medicalRecordModelView.formatter(newMedicalRecord, message="medicalRecord created")
+        return self.medicalRecordRepository.create(data)
     
     def update(self, medicalRecordId, data):
-        
         self.validation(data)
 
-        updatedMedicalRecord = self.medicalRecordRepository.update(medicalRecordId, data)
-        
-        return self.medicalRecordModelView.formatter(updatedMedicalRecord, message="medicalRecord updated")
+        return self.medicalRecordRepository.update(medicalRecordId, data)
 
     def delete(self, medicalRecordId):
         self.medicalRecordRepository.delete(medicalRecordId)

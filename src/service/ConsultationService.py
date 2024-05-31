@@ -43,7 +43,7 @@ class ConsultationService:
             if consultation.doctor and consultation.doctor.name == doctorName:
                 filtered_consultations.append(consultation)
 
-        return self.consultationModelView.formatterAll(filtered_consultations)
+        return filtered_consultations
     
     def findByPatientName(self, patientName):
         consultations = self.consultationRepository.getAll()
@@ -54,7 +54,7 @@ class ConsultationService:
             if consultation.doctor and consultation.patient.name == patientName:
                 filtered_consultations.append(consultation)
 
-        return self.consultationModelView.formatterAll(filtered_consultations)
+        return filtered_consultations
     
     
     def create(self, data):
@@ -62,25 +62,24 @@ class ConsultationService:
         dateString = data.pop('date', None)
 
         date = None
+
         if(dateString):
-            date = datetime.strptime(dateString, '%Y-%m-%d %H:%M:%S')
+            date = datetime.strptime(dateString, '%Y-%m-%d %H:%M')
 
         new_consultation = self.consultationRepository.create(data)
 
         self.appointmentService.create({"consultationId": new_consultation.id, "date": date})
 
-        return self.consultationModelView.formatter(new_consultation, message="Consultation created")
+        return new_consultation, 201
 
     def update(self, consultation_id, data):
         self.validation(data)
 
-        updated_consultation = self.consultationRepository.update(consultation_id, data)
-        
-        return self.consultationModelView.formatter(updated_consultation, message="Consultation updated")
+        return self.consultationRepository.update(consultation_id, data)
 
     def delete(self, consultation_id):
-        self.consultationRepository.delete(consultation_id)
         self.appointmentService.deleteByConsultationId(consultationId=consultation_id)
+        self.consultationRepository.delete(consultation_id)
         return self.consultationModelView.registerIdDeleted("Consultation deleted")
     
    

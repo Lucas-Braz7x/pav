@@ -1,6 +1,5 @@
 from src.repository.AppointmentRepository import AppointmentRepository
 from src.view.ModelView import ModelView
-from src.utils.addDay import addDay
 from flask_restful import abort
 from datetime import datetime
 
@@ -11,6 +10,14 @@ class AppointmentService:
 
     def validation(self, data):
         consultationId = data.get('consultationId')
+        date = data.get("date")
+
+        if isinstance(date, str):
+            data["date"] = datetime.strptime(date, '%Y-%m-%d %H:%M')
+        elif isinstance(date, datetime):
+            data["date"] = date
+        else:
+            abort(400, message="Date field must be a string or a datetime object")
 
         if not consultationId:
             abort(400, message="Consultation ID and Date are required")
@@ -18,10 +25,10 @@ class AppointmentService:
     def find(self, appointmentId=None):
         if appointmentId:
             appointment = self.appointmentRepository.getById(appointmentId)
-            return self.appointmentModelView.formatter(appointment)
+            return appointment
         
         appointments = self.appointmentRepository.getAll()
-        return self.appointmentModelView.formatterAll(appointments)
+        return appointments
     
     def findByDate(self, date):
         appointments = self.appointmentRepository.getAll()
@@ -32,11 +39,11 @@ class AppointmentService:
             if date in appointment_date_string:
                 filtered_appointments.append(appointment)
 
-        return self.appointmentModelView.formatterAll(filtered_appointments)
+        return filtered_appointments
     
     def findByConsultationId(self, consultationId):
         appointment = self.appointmentRepository.findByConsultationId(consultationId)
-        return self.appointmentModelView.formatter(appointment)
+        return appointment
 
     def findByConsultationId(self, appointmentId):
         return self.entity.query.filter_by(appointmentId=appointmentId).all()
@@ -45,23 +52,14 @@ class AppointmentService:
         date = data.get("date")
 
         self.validation(data)
-
-        if(not date):
-            print(addDay(datetime.now()))
-            #abort(400, message="Consultation ID and Date are required")
-
         
-        newAppointment = self.appointmentRepository.create(data)
-
-        return self.appointmentModelView.formatter(newAppointment, message="appointment created")
+        return self.appointmentRepository.create(data)
     
     def update(self, appointmentId, data):
         
         self.validation(data)
 
-        updatedAppointment = self.appointmentRepository.update(appointmentId, data)
-        
-        return self.appointmentModelView.formatter(updatedAppointment, message="appointment updated")
+        return self.appointmentRepository.update(appointmentId, data)
 
     def delete(self, appointmentId):
         self.appointmentRepository.delete(appointmentId)
