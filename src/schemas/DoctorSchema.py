@@ -7,6 +7,9 @@ class DoctorResponseSchema(Schema):
     specialty = fields.Str()
     crm = fields.Str()
 
+class DoctorResponseListSchema(Schema):
+    doctors = fields.List(fields.Nested(DoctorResponseSchema))
+
 class DoctorRequestSchema(Schema):
     name = fields.Str(required=True)
     specialty = fields.Str(required=True)
@@ -14,6 +17,13 @@ class DoctorRequestSchema(Schema):
 
     @validates("name")
     def validate_name(self, value):
+        if not re.match(pattern=r"^[a-zA-Z0-9_]+$", string=value):
+            raise ValidationError(
+                "Value must contain only alphanumeric and underscore characters."
+            )
+        
+    @validates("specialty")
+    def validate_specialty(self, value):
         if not re.match(pattern=r"^[a-zA-Z0-9_]+$", string=value):
             raise ValidationError(
                 "Value must contain only alphanumeric and underscore characters."
