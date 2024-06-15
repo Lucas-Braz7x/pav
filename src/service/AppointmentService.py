@@ -1,4 +1,5 @@
 from src.repository.AppointmentRepository import AppointmentRepository
+from src.repository.ConsultationRepository import ConsultationRepository
 from src.view.ModelView import ModelView
 from flask_restful import abort
 from datetime import datetime
@@ -6,21 +7,26 @@ from datetime import datetime
 class AppointmentService:
     def __init__(self):
         self.appointmentRepository = AppointmentRepository()
+        self.consultationRepository = ConsultationRepository()
         self.appointmentModelView = ModelView()
 
     def validation(self, data):
         consultationId = data.get('consultationId')
         date = data.get("date")
 
-        if isinstance(date, str):
-            data["date"] = datetime.strptime(date, '%Y-%m-%d %H:%M')
-        elif isinstance(date, datetime):
-            data["date"] = date
-        else:
-            abort(400, message="Date field must be a string or a datetime object")
+        if(date):
+            if isinstance(date, str):
+                data["date"] = datetime.strptime(date, '%Y-%m-%d %H:%M')
+            elif isinstance(date, datetime):
+                data["date"] = date
+            else:
+                abort(400, message="Date field must be a string or a datetime object")
 
         if not consultationId:
             abort(400, message="Consultation ID and Date are required")
+
+        self.consultationRepository.getById(consultationId)
+        
 
     def find(self, appointmentId=None):
         if appointmentId:
@@ -49,8 +55,6 @@ class AppointmentService:
         return self.entity.query.filter_by(appointmentId=appointmentId).all()
     
     def create(self, data):
-        date = data.get("date")
-
         self.validation(data)
         
         return self.appointmentRepository.create(data)
